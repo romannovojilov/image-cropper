@@ -2,6 +2,8 @@
  * npm install croppie
  * include node_modules/croppie/croppie.js
  * include node_modules/croppie/croppie.css
+ * 
+ * more info http://foliotek.github.io/Croppie/
  */
 
 function Avatar(option) {
@@ -25,13 +27,11 @@ function Avatar(option) {
     if (option) $.extend(setting, option);
     
     
-        //инициализация
     this.init = function(cropContainer) {
         crop = $(cropContainer).croppie(setting.crop);
     }
 
     
-    //отобразить изображение
     this.setUrl = function(url, ready) {
         if(crop == undefined) throw messages.error[0];
         crop.croppie('bind', {
@@ -55,7 +55,6 @@ function Avatar(option) {
         }
     }
 
-    //получить изображение
     this.getCroppedImage = function(format, callback) {
         if(crop == undefined) throw messages.error[0];
         crop.croppie('result', {
@@ -71,7 +70,6 @@ function Avatar(option) {
         });
     }
 
-    //отправить изображение
     this.sendToServer = function(url, callback) {
         self.getCroppedImage('blob', function(result) {
             var fd = new FormData();
