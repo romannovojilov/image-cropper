@@ -1,3 +1,9 @@
+/* to use
+ * npm install croppie
+ * include node_modules/croppie/croppie.js
+ * include node_modules/croppie/croppie.css
+ */
+
 function Avatar(option) {
     var self = this,
         crop = undefined,
