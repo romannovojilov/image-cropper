@@ -1,2 +1,3 @@
-##to use
-npm install croppie
+##to use##
+* npm install croppie
+* npm install jquery
