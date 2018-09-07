@@ -7,6 +7,9 @@
     <title>Document</title>
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
     <script src="node_modules/croppie/croppie.js"></script>
+    <script src="index.js"></script>
+
+
     <link rel="stylesheet" href="node_modules/croppie/croppie.css">
     <style>
         #demo-basic {
@@ -18,106 +21,32 @@
 </head>
 <body>
         <div id="demo-basic"></div>
+        <input type="file" name="" id="get">
         <input type="button" value="Сохранить" id="save" />
+        <input type="button" value="Отправить" id="send" />
         <br><br><br><br>
         <img id="result" src="" alt="">
         <script>
-            function b64toBlob(b64Data, contentType, sliceSize) {
-                contentType = contentType || '';
-                sliceSize = sliceSize || 512;
 
-                var byteCharacters = atob(b64Data);
-                var byteArrays = [];
+            var avatar = new Avatar();
+            avatar.init('#demo-basic');
 
-                for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-                    var slice = byteCharacters.slice(offset, offset + sliceSize);
-
-                    var byteNumbers = new Array(slice.length);
-                    for (var i = 0; i < slice.length; i++) {
-                        byteNumbers[i] = slice.charCodeAt(i);
-                    }
-
-                    var byteArray = new Uint8Array(byteNumbers);
-
-                    byteArrays.push(byteArray);
-                }
-
-              var blob = new Blob(byteArrays, {type: contentType});
-              return blob;
-            }
-
-            function appendFileAndSubmit(base64data){
-                // Get the form
-
-                var ImageURL = base64data;
-                // Split the base64 string in data and contentType
-                var block = ImageURL.split(";");
-                // Get the content type
-                var contentType = block[0].split(":")[1];// In this case "image/gif"
-                // get the real base64 content of the file
-                var realData = block[1].split(",")[1];// In this case "iVBORw0KGg...."
-
-                // Convert to blob
-                var blob = b64toBlob(realData, contentType);
-
-                // Create a FormData and append the file
-                var fd = new FormData();
-                fd.append("image", blob);
-
-                // Submit Form and upload file
-                $.ajax({
-                    url:"endpoint.php",
-                    data: fd, 
-                    type:"POST",
-                    contentType:false,
-                    processData:false,
-                    cache:false,
-                    dataType:"json",  
-                    error:function(err){
-                        console.error(err);
-                    },
-                    success:function(data){
-                        console.log(data);
-                    },
-                    complete:function(){
-                        console.log("Request finished.");
-                    }
-                });
-            }
-
-            var basic = $('#demo-basic').croppie({
-                viewport: {
-                    width: 200,
-                    height: 200
-                }
+            $('#get').change(function () {
+                avatar.setImage(this.files[0]);
             });
-            basic.croppie('bind', {
-                url: 'src/demo.jpg',
-                points: [77, 469, 280, 739]
-            });
-
+            
             $('#save').click(function () {
-                var w = 200,
-                    h = 200,
-                    size = 'viewport';
-                if (w || h) {
-                    size = {
-                        width: w,
-                        height: h
-                    };
-                }
-                basic.croppie('result', {
-                    type: 'canvas',
-                    size: size,
-                    resultSize: {
-                        width: 50,
-                        height: 50
-                    }
-                }).then(function (resp) {
-                    $('#result').attr('src', resp);
-                    appendFileAndSubmit(resp);
+                avatar.getCroppedImage('canvas', function(res) {
+                    $('#result').attr('src', res);
                 });
             });
+
+            $('#send').click(function () {
+                avatar.sendToServer('url', function(res) {
+                    alert(JSON.stringify(res))
+                });
+            });
+            
         </script>
 </body>
 </html>
